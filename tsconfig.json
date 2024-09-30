@@ -15,5 +15,5 @@
     },
     "experimentalDecorators": true
   },
-  "exclude": ["**/*.test.*", "site"]
+  "exclude": ["**/*.test.*"]
 }

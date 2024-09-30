@@ -4,10 +4,12 @@
   "description": "A CLI tool to generate typed environment variables from an env file",
   "type": "module",
   "main": "./dist/index.cjs",
-  "bin": "./dist/index.cjs",
+  "bin": {
+    "gen-typed-env": "dist/index.cjs"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Complexlity/typesafe-env"
+    "url": "git+https://github.com/Complexlity/typesafe-env.git"
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs, --clean",
