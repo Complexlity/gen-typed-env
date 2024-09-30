@@ -1,0 +1,52 @@
+{
+  "name": "gen-typed-env",
+  "version": "0.0.3",
+  "description": "A CLI tool to generate typed environment variables from an env file",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "bin": "./dist/index.cjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Complexlity/typesafe-env"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs, --clean",
+    "lint": "tsc --noEmit -p tsconfig.json && biome lint --diagnostic-level=error --no-errors-on-unmatched ./src",
+    "lint:fix": "biome check --write --unsafe ./src",
+    "lint:staged": "biome check --no-errors-on-unmatched --error-on-warnings --staged ./src",
+    "format": "biome format --write --no-errors-on-unmatched --staged .",
+    "ci": "pnpm run build",
+    "release": "pnpm run ci && changeset publish",
+    "publish": "pnpm run build && npm publish --access public"
+  },
+  "keywords": [
+    "env",
+    "typed",
+    "type safe",
+    "zod",
+    "type"
+  ],
+  "bugs": {
+    "url": "https://github.com/Complexlity/typesafe-env/issues"
+  },
+  "author": "Complexlity (https://complexity.dev)",
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@changesets/cli": "^2.27.7",
+    "@types/node": "^22.7.4",
+    "@types/prompts": "^2.4.9",
+    "@types/yargs": "^17.0.33",
+    "husky": "^9.1.4",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "detect-package-manager": "^3.0.2",
+    "dotenv": "^16.4.5",
+    "prompts": "^2.4.2",
+    "yargs": "^17.7.2",
+    "zod": "^3.23.8"
+  },
+  "packageManager": "pnpm@8.15.3+sha512.dd85cd6eca6417c6f73db32ba1eb4767ffb4cba4f5bf0727846722c92b6b9e56a2cc218b11385bbc2b21f18a16a67da77aceae9b61a0f56a1643b25e1fb6a605"
+}
