@@ -1,5 +1,11 @@
 # uni-farcaster-sdk
 
+## 0.0.4
+
+### Patch Changes
+
+- 5222452: Changed repo location
+
 ## 0.0.25
 
 ### Patch Changes
