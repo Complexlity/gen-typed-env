@@ -1,4 +1,4 @@
-# Typesafe Env
+# Generate Typed Env
 
 Create a type-safe config from your `.env` file.
 
@@ -13,7 +13,7 @@ npx gen-typed-env --file .env
 
 ## Example
 
-```.env
+```.envne
 USERNAME=Complexlity
 PROFILE_URL=https://github.com/Complexlity/typesafe-env/
 COMPANYNAME=

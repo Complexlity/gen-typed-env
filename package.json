@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Complexlity/typesafe-env.git"
+    "url": "git+https://github.com/Complexlity/gen-typed-env.git"
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs, --clean",
@@ -29,7 +29,7 @@
     "type"
   ],
   "bugs": {
-    "url": "https://github.com/Complexlity/typesafe-env/issues"
+    "url": "https://github.com/Complexlity/geyped-env/issues"
   },
   "author": "Complexlity (https://complexity.dev)",
   "license": "MIT",
