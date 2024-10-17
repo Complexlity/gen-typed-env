@@ -1,6 +1,6 @@
 {
   "name": "gen-typed-env",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A CLI tool to generate typed environment variables from an env file",
   "type": "module",
   "main": "./dist/index.cjs",

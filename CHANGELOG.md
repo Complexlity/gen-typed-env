@@ -1,5 +1,11 @@
 # uni-farcaster-sdk
 
+## 0.0.5
+
+### Patch Changes
+
+- 75fe31f: Make using dotenv optional
+
 ## 0.0.4
 
 ### Patch Changes
