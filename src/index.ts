@@ -4,6 +4,7 @@ import { execSync } from "child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import dotenv from "dotenv";
+import * as z from "zod";
 import prompts from "prompts";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
@@ -82,6 +83,8 @@ function generateZodSchema(envConfig: Record<string, string>): string {
       zodType += ".optional()";
     } else if (isUrl(value)) {
       zodType = "z.string().url()";
+    } else if (!isNaN(Number(value))) {
+      zodType = "z.coerce.number()";
     }
     return `  ${key}: ${zodType},`;
   });
@@ -90,12 +93,8 @@ function generateZodSchema(envConfig: Record<string, string>): string {
 }
 
 function isUrl(str: string): boolean {
-  try {
-    new URL(str);
-    return true;
-  } catch {
-    return false;
-  }
+  const { success } = z.string().url().safeParse(str);
+  return success;
 }
 
 function generateConfigFile(
