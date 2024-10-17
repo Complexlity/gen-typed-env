@@ -9,40 +9,65 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { getPackageManager } from "./get-package-manager.js";
 
-const argv = yargs(hideBin(process.argv))
+let argv = yargs(hideBin(process.argv))
   .option("file", {
     alias: "f",
     type: "string",
     description: "Specify a custom .env file path",
     default: ".env",
   })
+  .option("use-dotenv", {
+    alias: "d",
+    type: "boolean",
+    description: "Specify if you want to use dotenv for env parsing",
+    default: false,
+  })
   .parse();
 
 async function main() {
   try {
     let envPath: string;
-    if (argv instanceof Promise) {
-      envPath = (await argv).file;
-    } else envPath = argv.file;
-
+    let useDotEnv: boolean;
+    let parsedArgV = argv;
+    if (parsedArgV instanceof Promise) {
+      parsedArgV = await argv;
+      envPath = parsedArgV.file;
+      useDotEnv = parsedArgV.useDotenv;
+    } else {
+      envPath = parsedArgV.file;
+      useDotEnv = parsedArgV.useDotenv;
+    }
     const envContent = await fs.readFile(
       path.resolve(process.cwd(), envPath),
       "utf-8",
     );
+    if (!useDotEnv) {
+      const { dotenv } = await prompts({
+        type: "confirm",
+        name: "dotenv",
+        message: "Do you want to use dotenv?",
+        initial: useDotEnv,
+      });
+      useDotEnv = dotenv;
+    }
     const envConfig = dotenv.parse(envContent);
 
     const zodSchema = generateZodSchema(envConfig);
-    const configContent = generateConfigFile(zodSchema, envPath);
+    const options = {
+      envPath,
+      useDotEnv,
+    };
+    const configContent = generateConfigFile(zodSchema, options);
 
     await fs.writeFile(path.resolve(process.cwd(), "config.ts"), configContent);
     console.log("config.ts file has been created successfully.");
 
     //Ask if they want to instal zod
     const packageManager = await getPackageManager();
-
-    const shouldInstallZod = await askToInstallDependencies();
-    if (shouldInstallZod) {
-      await installDependencies(packageManager);
+    const dependencies = ["zod", ...(useDotEnv ? ["dotenv"] : [])];
+    const shouldInstallDependencies = await askToInstallDependencies();
+    if (shouldInstallDependencies) {
+      await installDependencies(packageManager, dependencies);
     }
   } catch (error) {
     console.error("An error occurred:", error);
@@ -73,22 +98,27 @@ function isUrl(str: string): boolean {
   }
 }
 
-function generateConfigFile(zodSchema: string, envPath: string): string {
-  return `import { z } from 'zod';
-import {config as dotenvConfig} from "dotenv"
-
-${
-  envPath === ".env"
-    ? "dotenvConfig()"
-    : "dotenvConfig({path: " + JSON.stringify(envPath) + "})"
-}
-
+function generateConfigFile(
+  zodSchema: string,
+  options: { envPath: string; useDotEnv: boolean },
+): string {
+  const { envPath, useDotEnv } = options;
+  return `import { z } from 'zod';${
+    useDotEnv ? `\nimport { config as dotenvConfig } from "dotenv";\n` : ""
+  }${
+    useDotEnv
+      ? envPath === ".env"
+        ? `dotenvConfig();`
+        : `dotenvConfig({ path: ${JSON.stringify(envPath)} });`
+      : ""
+  }
+    
 const envSchema = ${zodSchema};
-
+    
 const config = envSchema.parse(process.env);
-
+    
 export default config;
-`;
+    `;
 }
 
 async function askToInstallDependencies(): Promise<boolean> {
@@ -102,12 +132,14 @@ async function askToInstallDependencies(): Promise<boolean> {
   return response.installDependencies;
 }
 
-async function installDependencies(packageManager: string): Promise<void> {
-  const packages = ["zod", "dotenv"];
+async function installDependencies(
+  packageManager: string,
+  dependencies: string[],
+): Promise<void> {
   console.log(
-    `Installing packages ${packages.join(", ")} using ${packageManager}...`,
+    `Installing packages ${dependencies.join(", ")} using ${packageManager}...`,
   );
-  const packagesString = packages.join(" ");
+  const packagesString = dependencies.join(" ");
   try {
     let command: string;
     switch (packageManager) {
