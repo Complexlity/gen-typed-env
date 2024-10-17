@@ -1,5 +1,11 @@
 # uni-farcaster-sdk
 
+## 0.0.6
+
+### Patch Changes
+
+- c147955: Coerce number types
+
 ## 0.0.5
 
 ### Patch Changes
